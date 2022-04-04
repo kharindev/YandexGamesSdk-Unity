@@ -20,6 +20,8 @@ public class YandexLeaderboardExample : MonoBehaviour
         {
             var points = Random.Range(0, 100);
             _leaderboard.SetScore(points);
+            _leaderboardUi.Content.Clear();
+            _leaderboard.LoadScore();
         };
     }
 

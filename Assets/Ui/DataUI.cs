@@ -5,13 +5,15 @@ using UnityEngine.UI;
 
 public class DataUI : MonoBehaviour
 {
-    [SerializeField] private TMP_InputField inputField;
+    [SerializeField] private TMP_InputField inputKeyField;
+    [SerializeField] private TMP_InputField inputTextField;
     [SerializeField] private TextMeshProUGUI messageLabel;
     [SerializeField] private TextMeshProUGUI dataLabel;
     [SerializeField] private Button saveButton;
     [SerializeField] private Button loadButton;
     
-    public string InputValue => inputField.text;
+    public string InputKeyValue => inputKeyField.text;
+    public string InputTextValue => inputTextField.text;
 
     public string Message
     {

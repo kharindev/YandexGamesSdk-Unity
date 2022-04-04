@@ -4,7 +4,6 @@ using YandexGamesSdk;
 
 public class YandexUserExample : MonoBehaviour
 {
-    public string saveKey = "default";
     [SerializeField] private AvatarUI _avatarUi;
     [SerializeField] private DataUI _dataUi;
     private YandexUser _yandexUser = new YandexUser();
@@ -34,14 +33,38 @@ public class YandexUserExample : MonoBehaviour
         _yandexUser.Authenticate();
         _dataUi.SaveButtonListener = () =>
         {
-            var saveString = _dataUi.InputValue;
-            Debug.Log("save string "+saveString);
-            _yandexUser.Save(saveKey, saveString);
+            Debug.Log("SAVE CLICK");
+            var message = "";
+            var saveKey = _dataUi.InputKeyValue;
+            var saveValue = _dataUi.InputTextValue;
+            if (saveKey.Length == 0)
+            {
+                message += "введите ключь ";
+            }
+            else if(saveValue.Length == 0)
+            {
+                message += "введите значение";
+            }
+            else
+            {
+                _yandexUser.Save(saveKey, saveValue); 
+            }
+
+            _dataUi.Message = message;
         };
         
         _dataUi.LoadButtonListener = () =>
         {
-            _yandexUser.LoadData(saveKey);
+            var saveKey = _dataUi.InputKeyValue;
+            if (saveKey.Length == 0)
+            {
+                _dataUi.Message = "введите ключь ";
+            }
+            else
+            {
+                _yandexUser.LoadData(saveKey); 
+            }
+            
         };
 
         _avatarUi.ReviewButtonListener = () =>
@@ -66,13 +89,13 @@ public class YandexUserExample : MonoBehaviour
     
     private void OnDataLoaded(string key, string data)
     {
-        _dataUi.Message = "Loaded " + key;
+        _dataUi.Message = "Loaded " + key +" : "+data;
         _dataUi.Data = data;
     }
     
     private void OnDataSaved()
     {
-        _dataUi.Message = "Saved " + saveKey;
+        _dataUi.Message = "Saved " + _dataUi.InputKeyValue +":"+_dataUi.InputTextValue;
     }
     
     private void OnReviewSent()
