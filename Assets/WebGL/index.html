@@ -87,18 +87,14 @@
       }
       loadingBar.style.display = "block";
 
-      // YandexGamesSdk START
       var unityI = null;
-      // YandexGamesSdk END
       var script = document.createElement("script");
       script.src = loaderUrl;
       script.onload = () => {
         createUnityInstance(canvas, config, (progress) => {
           progressBarFull.style.width = 100 * progress + "%";
         }).then((unityInstance) => {
-          // YandexGamesSdk START
-          unityI = unityInstance; 
-          // YandexGamesSdk END
+          unityI = unityInstance;
           loadingBar.style.display = "none";
           fullscreenButton.onclick = () => {
             unityInstance.SetFullscreen(1);
@@ -109,9 +105,7 @@
       };
       document.body.appendChild(script);
     </script>
-    <!-- YandexGamesSdk START-->
     <script src="https://yandex.ru/games/sdk/v2"></script>
     <script src="Build/yagames.js"></script>
-     <!-- YandexGamesSdk END-->
   </body>
 </html>

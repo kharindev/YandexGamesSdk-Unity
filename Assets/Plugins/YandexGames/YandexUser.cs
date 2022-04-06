@@ -10,7 +10,7 @@ namespace YandexGamesSdk
         public event Action<DeviceInfo> onDeviceInfoReceived;
         public event Action onReviewSent;
         public event Action<string> onReviewError;
-
+        public UserData data;
         public YandexUser()
         {
             YandexUserHandler.SetListener(this);
@@ -18,6 +18,7 @@ namespace YandexGamesSdk
 
         public void OnAuthenticateSuccess(UserData userData)
         {
+            data = userData;
             onAuthenticateSuccess?.Invoke(userData);
         }
 

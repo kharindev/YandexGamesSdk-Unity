@@ -38,6 +38,18 @@ mergeInto(LibraryManager.library, {
 
   ConsoleLog: function(message) {
     consolelog(UTF8ToString(message));
+  },
+
+  Purchase: function(productId) {
+    purchase(UTF8ToString(productId));
+  },
+
+  InitPurchase: function() {
+    initPurchases();
+  },
+
+  GetPurchases: function() {
+    getPurchases();
   }
 
 });

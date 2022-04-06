@@ -130,3 +130,21 @@ public struct LoadedData
     public string key;
     public string data;
 }
+
+[Serializable]
+public struct Products
+{
+    public List<Product> products;
+}
+
+[Serializable]
+public struct Product
+{
+    public string id;
+    public string title;
+    public string description;
+    public string imageURI;
+    public string price;
+    public string priceValue;
+    public string priceCurrencyCode;
+}

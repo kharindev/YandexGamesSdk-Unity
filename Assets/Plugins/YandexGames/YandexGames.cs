@@ -29,10 +29,59 @@ public class YandexGames : MonoBehaviour
     
     [DllImport("__Internal")]
     public static extern void SetLeaderboardScore(string leaderboardId, int score);
-
+    
     [DllImport("__Internal")]
     public static extern void ConsoleLog(string error);
 
+    //PURCHASE
+    [DllImport("__Internal")]
+    public static extern void InitPurchase();
+    
+    [DllImport("__Internal")]
+    public static extern void Purchase(string productId);
+    
+    [DllImport("__Internal")]
+    public static extern void GetPurchases();
+    //
+    
+    string FixJson(string value)
+    {
+        value = "{\"products\":" + value + "}";
+        return value;
+    }
+    
+    public void YandexProductsReceived(string json)
+    {
+        Dispatcher.RunOnMainThread(()=>{
+            var products = JsonUtility.FromJson<Products>(FixJson(json));
+            YandexPurchasesHandler.OnYandexProductsReceived(products);
+        });
+    }
+    
+    public void YandexPurchsesReceived(string json)
+    {
+        Dispatcher.RunOnMainThread(()=>{
+            var products = JsonUtility.FromJson<Products>(FixJson(json));
+            YandexPurchasesHandler.OnYandexPurchasesReceived(products);
+        });
+    }
+    
+    public void OnPurchaseSuccess(string productId)
+    {
+        Dispatcher.RunOnMainThread(()=>{
+            YandexPurchasesHandler.OnPurchaseSuccess(productId);
+        });
+    }
+    
+    public void OnPurchaseFailed(string productId)
+    {
+        Dispatcher.RunOnMainThread(()=>{
+            YandexPurchasesHandler.OnPurchaseFailed(productId);
+        });
+    }
+    //
+    
+    
     public void RewardedOpen(string placementId)
     {  
         Dispatcher.RunOnMainThread(()=>{
@@ -137,6 +186,8 @@ public class YandexGames : MonoBehaviour
             YandexLeaderboardHandler.Received(response);
         });
     }
+
+    
 }
 
 public class YandexLeaderboardHandler
@@ -303,6 +354,60 @@ public class YandexAdsHandler
     {
         _noAds = result;
     }
+}
+
+
+public class YandexPurchasesHandler
+{
+    private static IYandexPurchasesListener _listener;
+
+    public static void SetListener(IYandexPurchasesListener listener)
+    {
+        _listener = listener;
+    }
+
+    public static void Init()
+    {
+        YandexGames.InitPurchase();
+    }
+
+    public static void Purchase(string productId)
+    {
+        YandexGames.Purchase(productId);
+    }
+
+    public static void OnYandexProductsReceived(Products products)
+    {
+        _listener?.YandexProductsReceived(products);
+    }
+    
+    public static void OnYandexPurchasesReceived(Products products)
+    {
+        _listener?.PurchasesReceived(products);
+    }
+
+    public static void OnPurchaseSuccess(string productId)
+    {
+        _listener?.PurchaseSuccess(productId);
+    }
+    
+    public static void OnPurchaseFailed(string productId)
+    {
+        _listener?.PurchaseFailed(productId);
+    }
+
+    public static void GetPurchases()
+    {
+        YandexGames.GetPurchases();
+    }
+}
+
+public interface IYandexPurchasesListener
+{
+    void YandexProductsReceived(Products products);
+    void PurchasesReceived(Products products);
+    void PurchaseSuccess(string key);
+    void PurchaseFailed(string key);
 }
 
 

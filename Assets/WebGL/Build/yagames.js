@@ -1,6 +1,7 @@
 var player = null;
 var sdk = null;
 var lb = null;
+var payments = null;
 
 YaGames.init().then(ysdk => {
   sdk = ysdk;
@@ -47,7 +48,6 @@ function getLeaderBoard() {
 }
 
 function setLeaderboardScore(id, score) {
-  console.log("setLeaderboardScore" +id +" "+score);
   sdk.getLeaderboards().then(lb => {
     console.log(id +" "+score);
     lb.setLeaderboardScore(id, score);
@@ -55,7 +55,6 @@ function setLeaderboardScore(id, score) {
 }
 
 function getLeaderboardEntries(name) {
-  console.log("getLeaderBoardEntries "+name);
   sdk.getLeaderboards().then(lb => {
     lb.getLeaderboardEntries(name, {
       quantityTop: 10,
@@ -73,7 +72,6 @@ function getLeaderboardEntries(name) {
 }
 
 function loadUserData(_key) {
-   console.log("loadUserData "+_key);
   sdk.getStorage().then(safeStorage => {
     var data = {
        "key": _key,
@@ -84,7 +82,6 @@ function loadUserData(_key) {
 }
 
 function saveUserData(_key, _data) {
-  console.log("saveUserData "+_key+" "+_data);
   sdk.getStorage().then(safeStorage => {
     safeStorage.setItem(_key, _data);
     unityI.SendMessage('YandexGames', 'DataSavedSuccess');
@@ -114,7 +111,6 @@ function requestReview() {
 }
 
 function showInterstitialAd(id) {
-  console.log("showInterstitialAd" +" "+id);
   sdk.adv.showFullscreenAdv({
     callbacks: {
       onOpen: () => {
@@ -135,7 +131,6 @@ function showInterstitialAd(id) {
 }
 
 function showRewardedAd(id) {
-  console.log("showRewardedAd" +" "+id);
   sdk.adv.showRewardedVideo({
     callbacks: {
       onOpen: () => {
@@ -161,3 +156,30 @@ function showRewardedAd(id) {
 function consolelog(message){
   console.log(message);
 } 
+
+function initPurchases(){
+  sdk.getPayments({ signed: true }).then(_payments => {
+          payments = _payments;
+          payments.getCatalog().then(products => {
+            unityI.SendMessage('YandexGames', 'YandexProductsReceived', JSON.stringify(products));
+        });
+      }).catch(err => {
+        console.log("Init purchases error: "+err)
+      })
+}
+
+function getPurchases(){
+  payments.getPurchases().then(purchases => {
+    unityI.SendMessage('YandexGames', 'YandexPurchsesReceived', JSON.stringify(purchases));
+    }).catch(err => {
+      console.log("get purchases error: "+err)
+    })
+}
+
+function purchase(productId){
+  payments.purchase({ id: productId }).then(purchase => {
+    unityI.SendMessage('YandexGames', 'OnPurchaseSuccess', purchase.productID);
+  }).catch(err => {
+    unityI.SendMessage('YandexGames', 'OnPurchaseFailed', productId);
+  })
+}

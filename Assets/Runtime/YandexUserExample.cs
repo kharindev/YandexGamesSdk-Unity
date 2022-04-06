@@ -80,6 +80,12 @@ public class YandexUserExample : MonoBehaviour
         _avatarUi.IsAuthorized = userData.isAuthorized;
         StartCoroutine(LoadIMG(userData.avatarUrlLarge, _avatarUi));
     }
+    private IEnumerator LoadIMG(string url, AvatarUI avatarUi)
+    {
+        var www = new WWW(url);
+        yield return www;
+        avatarUi.Icon = www.texture;
+    }
     
     private void OnDeviceInfoReceived(DeviceInfo deviceInfo)
     {
@@ -108,12 +114,7 @@ public class YandexUserExample : MonoBehaviour
         _avatarUi.ReviewButtonText = error;
     }
     
-    private IEnumerator LoadIMG(string url, AvatarUI avatarUi)
-    {
-        var www = new WWW(url);
-        yield return www;
-        avatarUi.Icon = www.texture;
-    }
+  
     
 
 }
